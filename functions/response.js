@@ -28,6 +28,7 @@ function response({ req, error, ...props }) {
 
   const print = (res) => {
     res.status(props.status).json(result);
+    res.end()
   };
 
   print.result = result;
