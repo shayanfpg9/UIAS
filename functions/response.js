@@ -7,7 +7,7 @@ function response({ req, error, ...props }) {
     method: req?.method,
     path: req?.path,
     status: props.status,
-    action: props?.action,
+    action: props?.action?.replaceAll(" ","-")?.toUpperCase(),
     error: error,
     debug: {
       params: req?.params,

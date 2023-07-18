@@ -8,7 +8,6 @@ const log = require("node-color-log");
 const response = require("./functions/response");
 const connect = require("./functions/connect");
 const tokenRouter = require("./routes/Token");
-const locationMiddleware = require("./middlewares/location");
 
 // Listen:
 connect(process.env.MONGOURI)
@@ -32,7 +31,7 @@ app.use(cookieParser());
 app.all("*", (req, res) => {
   response({
     req,
-    message: "Page not found",
+    message: "error 404",
     error: true,
   })(res);
 });
