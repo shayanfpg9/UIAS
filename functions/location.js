@@ -1,8 +1,13 @@
 const { default: axios } = require("axios");
 
 async function IP() {
-  const { ip } = (await axios.get("https://api64.ipify.org/?format=json")).data;
-  return ip;
+  if (!global.ip) {
+    const { ip } = (await axios.get("https://api64.ipify.org/?format=json"))
+      .data;
+    global.ip = ip;
+  }
+  
+  return global.ip;
 }
 
 async function location() {

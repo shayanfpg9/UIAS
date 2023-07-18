@@ -96,7 +96,6 @@ router.post("/", async (req, res) => {
   const { cookies } = req;
   const ip = await location.ip();
   const FindByIp = await TokenSchema.findOne({ ip });
-  global.ip = ip;
   global.findIp = FindByIp;
 
   if (cookies.Token || FindByIp) {
