@@ -28,6 +28,8 @@ app.use(express.json());
 app.use(cookieParser());
 
 // Routes
+app.use("/token/", tokenRouter);
+
 app.all("*", (req, res) => {
   response({
     req,
