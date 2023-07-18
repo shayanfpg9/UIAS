@@ -1,6 +1,6 @@
 const crypto = require("crypto");
 const algorithm = "aes-256-ctr";
-const iv = crypto.randomBytes(16);
+const iv = "\x00".repeat(16);
 
 function encrypt(text, salt) {
   try {
@@ -16,7 +16,10 @@ function encrypt(text, salt) {
 function decrypt(hash, salt) {
   try {
     const decipher = crypto.createDecipheriv(algorithm, salt, iv);
-    const decrpyted = Buffer.concat([decipher.update(Buffer.from(hash, 'hex')), decipher.final()])
+    const decrpyted = Buffer.concat([
+      decipher.update(Buffer.from(hash, "hex")),
+      decipher.final(),
+    ]);
 
     return decrpyted.toString("utf-8");
   } catch (e) {
