@@ -37,3 +37,5 @@ app.all("*", (req, res) => {
     error: true,
   })(res);
 });
+
+module.exports = app;
