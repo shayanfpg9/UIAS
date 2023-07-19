@@ -82,7 +82,7 @@ const GetToken = async (req, res) => {
     response({
       req,
       status: 500,
-      action: "generate token",
+      action: "get token",
       error: true,
       message: e?.message || e,
     })(res);
@@ -94,14 +94,27 @@ const GetToken = async (req, res) => {
 // Route
 router.post("/", async (req, res) => {
   const { cookies } = req;
-  const ip = await location.ip();
+
+  const ip =
+    process.env.NODE_ENV === "test" && req.body.ip
+      ? req.body.ip
+      : await location.ip();
   const FindByIp = await TokenSchema.findOne({ ip });
   global.findIp = FindByIp;
+  global.ip = ip;
 
-  if (cookies.Token || FindByIp) {
-    GetToken(req, res);
+  if (process.env.NODE_ENV !== "test") {
+    if (cookies.Token || FindByIp) {
+      GetToken(req, res);
+    } else {
+      GenerateToken(req, res);
+    }
   } else {
-    GenerateToken(req, res);
+    if (req.body.action === "get") {
+      GetToken(req, res);
+    } else {
+      GenerateToken(req, res);
+    }
   }
 });
 
