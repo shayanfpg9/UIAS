@@ -79,13 +79,6 @@ const GetToken = async (req, res) => {
       },
     })(res);
   } catch (e) {
-    response({
-      req,
-      status: 500,
-      action: "get token",
-      error: true,
-      message: e?.message || e,
-    })(res);
     res.clearCookie("Token");
     GenerateToken(req, res);
   }
