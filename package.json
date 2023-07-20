@@ -23,7 +23,7 @@
   "devDependencies": {
     "dotenv": "^16.0.3"
   },
-  "name": "an-bot",
+  "name": "UIAS",
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT"
