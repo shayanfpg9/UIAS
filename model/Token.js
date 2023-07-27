@@ -7,21 +7,14 @@ const TokenSchema = new Schema(
       required: true,
       unique: true,
     },
-    ip: {
-      type: "string",
-    },
+    ip: String,
     date: {
-      type: "number",
+      type: Date,
+      default: Date.now,
     },
-    agent: {
-      type: "string",
-    },
-    location: {
-      type: "string",
-    },
-    platform: {
-      type: "string",
-    },
+    agent: String,
+    location: String,
+    platform: String,
   },
   {
     timestamps: true,

@@ -33,9 +33,18 @@ describe("Test token router", () => {
 
     expect(response.body).toBeDefined();
     expect(response.body.data).toBeDefined();
-    expect(Object.keys(response.body.data).toString()).toMatch(
-      ["token", "ip", "platform", "agent", "location", "date"].toString()
-    );
+    expect(Object.keys(response.body.data)).toMatchObject([
+      "token",
+      "ip",
+      "agent",
+      "location",
+      "platform",
+      "_id",
+      "date",
+      "createdAt",
+      "updatedAt",
+      "__v",
+    ]);
 
     const cookies = response.headers["set-cookie"];
     expect(cookies).toBeDefined();
@@ -55,9 +64,18 @@ describe("Test token router", () => {
 
     expect(response.body).toBeDefined();
     expect(response.body.data).toBeDefined();
-    expect(Object.keys(response.body.data).toString()).toMatch(
-      "_id,token,ip,date,agent,location,platform,createdAt,updatedAt,__v"
-    );
+    expect(Object.keys(response.body.data)).toMatchObject([
+      "_id",
+      "token",
+      "ip",
+      "agent",
+      "location",
+      "platform",
+      "date",
+      "createdAt",
+      "updatedAt",
+      "__v",
+    ]);
   });
 
   test("POST /token [GET] -BY_ID-", async () => {
@@ -69,9 +87,18 @@ describe("Test token router", () => {
 
     expect(response.body).toBeDefined();
     expect(response.body.data).toBeDefined();
-    expect(Object.keys(response.body.data).toString()).toMatch(
-      "_id,token,ip,date,agent,location,platform,createdAt,updatedAt,__v"
-    );
+    expect(Object.keys(response.body.data)).toMatchObject([
+      "_id",
+      "token",
+      "ip",
+      "agent",
+      "location",
+      "platform",
+      "date",
+      "createdAt",
+      "updatedAt",
+      "__v",
+    ]);
 
     const cookies = response.headers["set-cookie"];
     expect(cookies).toBeDefined();

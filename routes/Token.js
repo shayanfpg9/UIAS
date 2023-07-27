@@ -27,18 +27,15 @@ const GenerateToken = async (req, res) => {
       platform: req.headers["sec-ch-ua-platform"].replace(/(\/|")/gm, ""),
       agent: req.headers["user-agent"],
       location: LocationObj.toString(),
-      date: Date.now(),
     };
 
     setCookie(TokenObject.token)(res);
-
-    await TokenSchema.create(TokenObject);
 
     response({
       req,
       status: 200,
       action: "generate token",
-      data: { ...TokenObject },
+      data: { ...(await TokenSchema.create(TokenObject)).toObject() },
     })(res);
   } catch (e) {
     response({
