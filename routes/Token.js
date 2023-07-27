@@ -18,8 +18,13 @@ function setCookie(token) {
 }
 
 // Generate Token:
-const GenerateToken = async (req, res) => {
+router.post("/generate", async (req, res) => {
   try {
+    global.ip =
+      process.env.NODE_ENV === "test" && req.query.ip
+        ? req.query.ip
+        : await location.ip();
+
     const LocationObj = await location();
     const TokenObject = {
       token: generate(),
@@ -40,28 +45,41 @@ const GenerateToken = async (req, res) => {
   } catch (e) {
     response({
       req,
-      status: 500,
+      status: e?.status || 500,
       action: "generate token",
       error: true,
       message: e?.message || e,
     })(res);
   }
-};
+});
 
 // Get Token:
-const GetToken = async (req, res) => {
+router.get("/get", async (req, res) => {
   try {
+    const ip =
+      process.env.NODE_ENV === "test" && req.query.ip
+        ? req.query.ip
+        : await location.ip();
+    const FindByIp = await TokenSchema.findOne({ ip });
+
     let token = undefined;
-    if (global.findIp) {
-      token = global.findIp.token;
+    if (FindByIp) {
+      token = FindByIp.token;
       setCookie(token)(res);
     } else {
+      if (
+        req.cookies.Token == undefined &&
+        typeof req.cookies.Token !== "string"
+      ) {
+        throw "Cookie is undefined";
+      }
+      
       const [hash, salt] = req.cookies.Token.split("/");
       token = decrypt(hash, salt);
     }
 
     const filter = { token };
-    const update = { ip: global.ip, date: Date.now() };
+    const update = { ip, date: Date.now() };
 
     const updated = await TokenSchema.findOneAndUpdate(filter, update, {
       new: true,
@@ -77,34 +95,15 @@ const GetToken = async (req, res) => {
     })(res);
   } catch (e) {
     res.clearCookie("Token");
-    GenerateToken(req, res);
-  }
-};
 
-// Route
-router.post("/", async (req, res) => {
-  const { cookies } = req;
-
-  const ip =
-    process.env.NODE_ENV === "test" && req.body.ip
-      ? req.body.ip
-      : await location.ip();
-  const FindByIp = await TokenSchema.findOne({ ip });
-  global.findIp = FindByIp;
-  global.ip = ip;
-
-  if (process.env.NODE_ENV !== "test") {
-    if (cookies.Token || FindByIp) {
-      GetToken(req, res);
-    } else {
-      GenerateToken(req, res);
-    }
-  } else {
-    if (req.body.action === "get") {
-      GetToken(req, res);
-    } else {
-      GenerateToken(req, res);
-    }
+    response({
+      req,
+      status: e?.status || 404,
+      action: "get token",
+      error: true,
+      title: "Token not found",
+      message: e?.message || e,
+    })(res);
   }
 });
 
