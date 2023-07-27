@@ -12,7 +12,7 @@ let ip = faker.internet.ipv4();
 let cookie = "";
 
 describe("Test token router", () => {
-  test("POST /token [GENERATE]", async () => {
+  test("POST /token/generate [GENERATE-TOKEN]", async () => {
     const platform = faker.helpers.arrayElement([
       "Windows",
       "macOS",
@@ -23,8 +23,7 @@ describe("Test token router", () => {
     const agent = faker.internet.userAgent();
 
     const response = await request
-      .post("/token/")
-      .send({ ip })
+      .post("/token/generate?ip=" + ip)
       .set("sec-ch-ua-platform", platform)
       .set("user-agent", agent)
       .unset("cookie", "Token")
@@ -54,10 +53,9 @@ describe("Test token router", () => {
     cookie = response.headers["set-cookie"][0];
   });
 
-  test("POST /token [GET] -BY_COOKIE-", async () => {
+  test("GET /token/ [GET-TOKEN] -BY_COOKIE-", async () => {
     const response = await request
-      .post("/token/")
-      .send({ action: "get", ip })
+      .get("/token/get?ip=" + ip)
       .expect(200)
       .set("Cookie", cookie)
       .expect("Content-Type", /json/);
@@ -78,10 +76,9 @@ describe("Test token router", () => {
     ]);
   });
 
-  test("POST /token [GET] -BY_ID-", async () => {
+  test("GET /token/ [GET-TOKEN] -BY_ID-", async () => {
     const response = await request
-      .post("/token/")
-      .send({ action: "get", ip })
+      .get("/token/get?ip=" + ip)
       .expect(200)
       .expect("Content-Type", /json/);
 
@@ -104,6 +101,18 @@ describe("Test token router", () => {
     expect(cookies).toBeDefined();
     expect(cookies.length).toBeGreaterThan(0);
     expect(response.headers["set-cookie"][0]).toMatch(/^Token=.+/);
+  });
+
+  test("GET /token/ [GET] -ERROR-", async () => {
+    const response = await request
+      .get("/token/get?ip=" + faker.internet.ipv4())
+      .expect(404)
+      .expect("Content-Type", /json/);
+
+    expect(response.body).toBeDefined();
+    expect(response.body.data).toBeDefined();
+    expect(response.body.error).toBeTruthy();
+    expect(Object.keys(response.body.data)).toMatchObject(["title", "message"]);
   });
 });
 
