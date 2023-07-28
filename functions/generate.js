@@ -2,7 +2,7 @@ const { randomBytes } = require("crypto");
 const Chance = require("chance");
 const chance = new Chance();
 
-function generate(length = 256) {
+function generate(length = 32) {
   const token = randomBytes(length / 4)
     .toString("hex")
     .split("");

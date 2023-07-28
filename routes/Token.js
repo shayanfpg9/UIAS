@@ -7,7 +7,7 @@ const { encrypt, decrypt } = require("../functions/secret");
 
 // Set Cookie:
 function setCookie(token) {
-  const salt = generate(32);
+  const salt = generate();
   const hidden = encrypt(token, salt);
 
   return (res) => {

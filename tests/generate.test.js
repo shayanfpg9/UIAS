@@ -8,5 +8,5 @@ test("Is it String",()=>{
 })
 
 test("Is it 256 characters",()=>{
-    expect(token.length).toBe(256)
+    expect(token.length).toBe(32)
 })
