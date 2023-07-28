@@ -20,6 +20,8 @@ function setCookie(token) {
 // Generate Token:
 router.post("/generate", async (req, res) => {
   try {
+    res.clearCookie("Token");
+
     global.ip =
       process.env.NODE_ENV === "test" && req.query.ip
         ? req.query.ip
@@ -32,6 +34,7 @@ router.post("/generate", async (req, res) => {
       platform: req.headers["sec-ch-ua-platform"].replace(/(\/|")/gm, ""),
       agent: req.headers["user-agent"],
       location: LocationObj.toString(),
+      test: process.env.NODE_ENV === "test",
     };
 
     setCookie(TokenObject.token)(res);
@@ -40,7 +43,10 @@ router.post("/generate", async (req, res) => {
       req,
       status: 200,
       action: "generate token",
-      data: { ...(await TokenSchema.create(TokenObject)).toObject() },
+      data: {
+        ...(await TokenSchema.create(TokenObject)).toObject(),
+        test: undefined,
+      },
     })(res);
   } catch (e) {
     response({
@@ -73,7 +79,7 @@ router.get("/get", async (req, res) => {
       ) {
         throw "Cookie is undefined";
       }
-      
+
       const [hash, salt] = req.cookies.Token.split("/");
       token = decrypt(hash, salt);
     }
@@ -91,6 +97,7 @@ router.get("/get", async (req, res) => {
       action: "get token",
       data: {
         ...updated.toObject(),
+        test: undefined,
       },
     })(res);
   } catch (e) {

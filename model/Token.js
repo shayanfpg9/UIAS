@@ -15,6 +15,10 @@ const TokenSchema = new Schema(
     agent: String,
     location: String,
     platform: String,
+    test: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,
