@@ -15,11 +15,12 @@ const ClearTokens = async () => {
     date: {
       $lte: threeMonthsAgo,
     },
+    test: false,
   });
 
   log.debug(`Delete ${expaire.deletedCount | 0} tokens`);
 
-  return expaire.deletedCount | 0
+  return expaire.deletedCount | 0;
 };
 
 connect(process.env.MONGOURI)

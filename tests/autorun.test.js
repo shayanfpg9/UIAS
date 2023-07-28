@@ -11,6 +11,7 @@ global.console = {
 
 const ids = [];
 let deleted = 0;
+let testID = "";
 
 beforeAll(async () => {
   await AutoFunction();
@@ -33,15 +34,26 @@ beforeAll(async () => {
       agent: generate(20),
       location: chance.locale(),
       date: randomTimestamp,
+      test: i === 8,
     });
 
     ids.push(item._id);
+
+    if (i === 8) testID = item._id;
 
     i++;
   }
 
   deleted = await AutoFunction();
 }, 15000);
+
+test("Test isn't deleted", async () => {
+  const testToken = await TokenSchema.findOne({ id: testID });
+  expect(testToken).not.toBeNull();
+
+  testToken.delete();
+  deleted++;
+});
 
 test("Fakes deleted", () => {
   expect(deleted).toBe(ids.length);
