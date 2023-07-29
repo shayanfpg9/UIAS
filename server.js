@@ -8,6 +8,7 @@ const log = require("node-color-log");
 const response = require("./functions/response");
 const connect = require("./functions/connect");
 const tokenRouter = require("./routes/Token");
+const historyRouter = require("./routes/History");
 
 // Listen:
 connect(process.env.MONGOURI)
@@ -29,6 +30,7 @@ app.use(cookieParser());
 
 // Routes
 app.use("/token/", tokenRouter);
+app.use("/history/", historyRouter);
 
 app.all("*", (req, res) => {
   response({
