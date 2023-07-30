@@ -72,24 +72,28 @@ router.post("/new/", async (req, res) => {
       count: 1,
     };
 
-    if (HistorySchema.length < page.length)
-      throw { message: "Complete all fields", status: 400 };
-
     const IsExisted = await HistorySchema.findOne({
       token: req.query.token,
       PageId: page.PageId,
     });
 
-    if (IsExisted !== null) throw { message: "existed", status: 400 };
+    if (IsExisted !== null) throw { message: "Existed", status: 400 };
 
-    const Push = HistorySchema.create(page);
+    try {
+      const Create = await HistorySchema.create(page);
 
-    response({
-      req,
-      action: "add history",
-      status: 201,
-      data: Push,
-    })(res);
+      response({
+        req,
+        action: "add history",
+        status: 201,
+        data: Create,
+      })(res);
+    } catch (e) {
+      throw {
+        message: "All fields are require",
+        status: 400,
+      };
+    }
   } catch (e) {
     response({
       req,

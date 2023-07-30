@@ -32,6 +32,12 @@ test("ALL /history/** [WITHOUT-TRUE-TOKEN]", async () => {
   await request.get(`/history/has?token=${generate()}`).expect(401);
   await request.post(`/history/new?token=${generate()}`).expect(401);
   await request.put(`/history/update?token=${generate()}`).expect(401);
+
+  await request
+    .post(`/history/new/?token=${token}`)
+    .send({})
+    .expect("Content-Type", /json/)
+    .expect(400);
 });
 
 describe("Check status + Make new", () => {
