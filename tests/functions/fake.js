@@ -146,7 +146,6 @@ async function search(data, information = false) {
     ...info,
     token: (await token()).token,
     date: Date.now(),
-    visit: undefined,
   });
 }
 
