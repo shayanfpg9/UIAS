@@ -19,6 +19,7 @@ global.console = {
 const pageName = faker.commerce.product() + " - " + faker.word.sample();
 const pageId = Date.now();
 let token = "";
+let lastPrice = 0;
 
 beforeAll(async () => {
   token = (await TestFunctions.token()).token;
@@ -63,6 +64,8 @@ describe("Check status + Make new", () => {
     expect(response.body).toBeDefined();
     expect(response.body.error).toBeUndefined();
     expect(response.body.data).toBeDefined();
+
+    lastPrice = response.body.data.price;
   });
 
   test("GET /history/has/?token=&page= [HAS-PAGE-EXISTED] -TRUE-", async () => {
@@ -103,6 +106,26 @@ describe("Update status", () => {
       name: pageName,
       visits: 2,
     });
+  });
+
+  test("PUT /history/update/?token=&page= [EDIT-PAGE]", async () => {
+    const information = await TestFunctions.history(
+      { PageId: pageId, price: 100 },
+      true
+    );
+    const response = await request
+      .put(`/history/update/?token=${token}&page=${pageId}`)
+      .send(information)
+      .expect("Content-Type", /json/)
+      .expect(200);
+
+    expect(response.body).toBeDefined();
+    expect(response.body.error).toBeUndefined();
+    expect(response.body.data).toBeDefined();
+    expect(response.body.data.diff).toBeDefined();
+    expect(response.body.data.diff.price.before).toBe(lastPrice);
+    expect(response.body.data.diff.price.after).toBe(100);
+    expect(response.body.data.diff.name).toBeUndefined();
   });
 });
 

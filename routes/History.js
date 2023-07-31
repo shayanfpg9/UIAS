@@ -1,4 +1,5 @@
 const router = require("express").Router();
+const difference = require("../functions/difference");
 const response = require("../functions/response");
 const HistorySchema = require("../model/History");
 const TokenSchema = require("../model/Token");
@@ -119,9 +120,22 @@ router.put("/update/", async (req, res) => {
     if (IsExisted === null)
       throw { message: "Page is undefined in user history", status: 404 };
 
+    if (req.body) {
+      delete req.body.token;
+      delete req.body.PageId;
+      delete req.body.token;
+      delete req.body.name;
+    }
+
+    const Last = await HistorySchema.findOne({ PageId: +req.query.page });
     const Update = await HistorySchema.findOneAndUpdate(
       { PageId: +req.query.page },
-      { $inc: { count: 1 } },
+      {
+        $set: {
+          ...req.body,
+        },
+        $inc: { count: 1 },
+      },
       {
         new: true,
       }
@@ -135,6 +149,7 @@ router.put("/update/", async (req, res) => {
         name: Update.name,
         id: Update.PageId,
         visits: Update.count,
+        diff: difference(Last.toObject(), Update.toObject()),
       },
     })(res);
   } catch (e) {
