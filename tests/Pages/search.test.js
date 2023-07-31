@@ -97,7 +97,7 @@ describe("Update visits", () => {
   });
 });
 
-describe("Get", () => {
+describe("Get search", () => {
   test("GET /search/get/?id= [GET-ONE]", async () => {
     const response = await request
       .get(`/search/get/?id=${pageId}`)
