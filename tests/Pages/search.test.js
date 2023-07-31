@@ -22,6 +22,7 @@ const pageName = faker.commerce.product();
 let pageId = "";
 let token = "";
 let page = "";
+let Another;
 
 beforeAll(async () => {
   token = (await TestToken()).token;
@@ -38,11 +39,19 @@ test("ALL /search/** [WITHOUT-TRUE-TOKEN]", async () => {
     .expect(400);
 
   await request.put(`/search/update/?id=${generate()}`).expect(400);
+
+  await request.get(`/search/get/?id=${generate()}`).expect(400);
+  await request.get(`/search/get/?user=${generate()}`).expect(400);
+  await request.get(`/search/get/?user=${token}`).expect(404);
+  await request.get(`/search/get/`).expect(400);
 });
 
 describe("Check status + Make new", () => {
   test("POST /search/new/?token= [NEW-PAGE]", async () => {
-    const information = await search({ word: pageName }, true);
+    const information = {
+      ...(await search({ word: pageName }, true)),
+      Histories: generate(),
+    };
     const response = await request
       .post(`/search/new/?token=${token}`)
       .send(information)
@@ -53,6 +62,7 @@ describe("Check status + Make new", () => {
     expect(response.body.error).toBeUndefined();
     expect(response.body.data).toBeDefined();
     expect(response.body.data._id).toBeDefined();
+    expect(response.body.data.Histories).toBeUndefined();
 
     pageId = response.body.data._id;
   });
@@ -74,7 +84,6 @@ describe("Update visits", () => {
       .expect(200);
 
     expect(response.body).toBeDefined();
-    expect(response.body.data.page).toBe();
     expect(response.body.error).toBeUndefined();
     expect(response.body.data).toBeDefined();
     expect(response.body.data.Histories).toBeDefined();
@@ -88,10 +97,49 @@ describe("Update visits", () => {
   });
 });
 
+describe("Get", () => {
+  test("GET /search/get/?id= [GET-ONE]", async () => {
+    const response = await request
+      .get(`/search/get/?id=${pageId}`)
+      .expect("Content-Type", /json/)
+      .expect(200);
+
+    expect(response.body).toBeDefined();
+    expect(response.body.error).toBeUndefined();
+    expect(response.body.data).toBeDefined();
+    expect(response.body.data[0]).toBeDefined();
+    expect(response.body.data[0].token).toBe(token);
+
+    if (response.body.data[0].Histories) {
+      expect(response.body.data[0].Histories.name).toBeDefined();
+    }
+  });
+
+  test("GET /search/get/?id= [GET-MANY]", async () => {
+    Another = (await search({ Histories: page }))._id;
+    const response = await request
+      .get(`/search/get/?user=${token}`)
+      .expect("Content-Type", /json/)
+      .expect(200);
+
+    expect(response.body).toBeDefined();
+    expect(response.body.error).toBeUndefined();
+    expect(response.body.data).toBeDefined();
+    expect(response.body.data.length).toBe(2);
+    expect(response.body.data[1]).toBeDefined();
+    expect(response.body.data[1].token).toBe(token);
+
+    if (response.body.data[1].Histories) {
+      expect(response.body.data[1].Histories.name).toBeDefined();
+    }
+  });
+});
+
 afterAll(async () => {
-  await SearchSchema.findByIdAndDelete(pageId);
-  await HistorySchema.findByIdAndDelete({
+  await SearchSchema.deleteMany({
     token,
-    _id: page,
+  });
+  await HistorySchema.deleteMany({
+    token,
   });
 });

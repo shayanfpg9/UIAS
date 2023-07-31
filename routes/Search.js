@@ -40,14 +40,13 @@ router.post("/new/", async (req, res) => {
     if (!(await validateToken(req.query.token)))
       throw { message: "Token is undefined", status: 401 };
 
-    req.body.visit = undefined;
     req.body.date = undefined;
 
     const page = {
       ...req.body,
       token: req.query.token,
       date: Date.now(),
-      visit: undefined,
+      Histories: undefined,
     };
 
     if (SearchSchema.length < page.length)
@@ -117,6 +116,55 @@ router.put("/update/", async (req, res) => {
       action: "update visits",
       error: true,
       message: e?.message || e,
+    })(res);
+  }
+});
+
+// Get search
+router.get("/get/", async (req, res) => {
+  try {
+    let Founded = [];
+
+    if (req.query.id) {
+      if (!(await validateSearch(req.query.id)))
+        throw { message: "Search id is undefined", status: 400 };
+
+      const Obj = await SearchSchema.findOne({ _id: req.query.id });
+
+      await Obj.populate("Histories");
+
+      Founded.push(Obj);
+    } else if (req.query.user) {
+      if (!(await validateToken(req.query.user)))
+        throw { message: "User token is undefined", status: 400 };
+
+      Founded = await SearchSchema.find({ token: req.query.user }).populate(
+        "Histories"
+      );
+
+      if (Founded.length <= 0 || !Object.keys(Founded[0])) {
+        throw null;
+      }
+    } else {
+      throw {
+        message: "You have to pass id or user in query",
+        status: 400,
+      };
+    }
+
+    response({
+      req,
+      action: "get search",
+      status: 200,
+      data: Founded,
+    })(res);
+  } catch (e) {
+    response({
+      req,
+      status: e?.status || 404,
+      action: "get search",
+      error: true,
+      message: e?.message || e || "Search is undefined",
     })(res);
   }
 });
