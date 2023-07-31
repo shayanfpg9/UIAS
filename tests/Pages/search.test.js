@@ -115,7 +115,7 @@ describe("Get", () => {
     }
   });
 
-  test("GET /search/get/?id= [GET-MANY]", async () => {
+  test("GET /search/get/?user= [GET-MANY]", async () => {
     Another = (await search({ Histories: page }))._id;
     const response = await request
       .get(`/search/get/?user=${token}`)
