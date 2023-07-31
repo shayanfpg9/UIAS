@@ -9,8 +9,8 @@ const app = require("../../server");
 const request = require("supertest")(app);
 const { faker } = require("@faker-js/faker");
 const HistorySchema = require("../../model/History");
-const TokenSchema = require("../../model/Token");
 const generate = require("../../functions/generate");
+const TestFunctions = require("../functions/fake");
 
 global.console = {
   log: jest.fn,
@@ -21,7 +21,7 @@ const pageId = Date.now();
 let token = "";
 
 beforeAll(async () => {
-  token = (await TokenSchema.findOne({ test: true })).token;
+  token = (await TestFunctions.token()).token;
 });
 
 test("ALL /history/** [WITHOUT-TRUE-TOKEN]", async () => {
@@ -49,60 +49,10 @@ describe("Check status + Make new", () => {
   });
 
   test("POST /history/new/?token= [NEW-PAGE]", async () => {
-    const information = {
-      PageId: pageId,
-      name: pageName,
-      color: faker.color.human(),
-      age: faker.helpers.arrayElement([
-        "baby",
-        "child",
-        "teen",
-        "adult",
-        "middle-aged",
-        "elder",
-      ]),
-      model: faker.helpers.arrayElement([
-        "oval",
-        "butterfly",
-        "square",
-        "circle",
-        "pilot",
-        "cat",
-        "rectangle",
-        "polygon",
-        "wayfarer",
-      ]),
-      gender: faker.person.sex(),
-      usage: faker.helpers.arrayElement([
-        "sunglasses",
-        "goggles",
-        "glasses",
-        "sport-glasses",
-        "smoked-glasses",
-        "dual-purpose",
-      ]),
-      price: faker.commerce.price(),
-      material: faker.helpers.arrayElement([
-        "plastic",
-        "zelonite",
-        "cellulose-acetate",
-        "zylonit",
-        "nylon",
-        "optyl",
-        "spx",
-        "aluminium",
-        "nickel",
-        "flexon",
-        "stainless-steel",
-        "beryllium",
-        "titanium",
-        "monelle",
-        "gold",
-        "wooden",
-        "bony",
-      ]),
-      FrameType: faker.helpers.arrayElement(["combination", "rimless", "half"]),
-    };
+    const information = await TestFunctions.history(
+      { PageId: pageId, name: pageName },
+      true
+    );
 
     const response = await request
       .post(`/history/new/?token=${token}`)
