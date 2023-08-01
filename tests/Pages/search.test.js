@@ -22,7 +22,6 @@ const pageName = faker.commerce.product();
 let pageId = "";
 let token = "";
 let page = "";
-let Another;
 
 beforeAll(async () => {
   token = (await TestToken()).token;
@@ -116,7 +115,8 @@ describe("Get search", () => {
   });
 
   test("GET /search/get/?user= [GET-MANY]", async () => {
-    Another = (await search({ Histories: page }))._id;
+    (await search({ Histories: page }))._id;
+
     const response = await request
       .get(`/search/get/?user=${token}`)
       .expect("Content-Type", /json/)
