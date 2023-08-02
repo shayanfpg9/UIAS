@@ -115,7 +115,7 @@ describe("Get search", () => {
   });
 
   test("GET /search/get/?user= [GET-MANY]", async () => {
-    (await search({ Histories: page }))._id;
+    (await search({}))._id;
 
     const response = await request
       .get(`/search/get/?user=${token}`)
@@ -129,9 +129,12 @@ describe("Get search", () => {
     expect(response.body.data[1]).toBeDefined();
     expect(response.body.data[1].token).toBe(token);
 
-    if (response.body.data[1].Histories) {
-      expect(response.body.data[1].Histories.name).toBeDefined();
-    }
+    response.body.data.forEach((obj,i) => {
+      if (obj.Histories) {
+        expect(i).toBe(0)
+        expect(obj.Histories.name).toBeDefined();
+      }
+    })
   });
 });
 
