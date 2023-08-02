@@ -10,6 +10,7 @@ const connect = require("./functions/connect");
 const tokenRouter = require("./routes/Token");
 const historyRouter = require("./routes/History");
 const searchRouter = require("./routes/Search");
+const reasonRouter = require("./routes/Reason");
 
 // Listen:
 connect(process.env.MONGOURI)
@@ -35,6 +36,7 @@ app.use(cookieParser());
 app.use("/token/", tokenRouter);
 app.use("/history/", historyRouter);
 app.use("/search/", searchRouter);
+app.use("/reason/", reasonRouter);
 
 app.all("*", (req, res) => {
   response({
