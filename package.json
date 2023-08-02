@@ -16,7 +16,8 @@
     "yarn": "^1.22.19"
   },
   "scripts": {
-    "start": "nodemon server --ignore *.test.js",
+    "start:dev": "nodemon setup --ignore *.test.js",
+    "start:prod": "node setup",
     "test": "jest --config jest.config.js",
     "autorun": "node ./auto/autorun.js"
   },
