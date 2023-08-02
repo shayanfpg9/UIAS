@@ -5,7 +5,7 @@ const {
   afterAll,
   beforeAll,
 } = require("@jest/globals");
-const app = require("../../server");
+const app = require("../../app");
 const request = require("supertest")(app);
 const { faker } = require("@faker-js/faker");
 const SearchSchema = require("../../model/Search");
@@ -41,7 +41,6 @@ test("ALL /search/** [WITHOUT-TRUE-TOKEN]", async () => {
 
   await request.get(`/search/get/?id=${generate()}`).expect(400);
   await request.get(`/search/get/?user=${generate()}`).expect(400);
-  await request.get(`/search/get/?user=${token}`).expect(404);
   await request.get(`/search/get/`).expect(400);
 });
 

@@ -5,7 +5,7 @@ const {
   afterAll,
   beforeAll,
 } = require("@jest/globals");
-const app = require("../../server");
+const app = require("../../app");
 const request = require("supertest")(app);
 const { faker } = require("@faker-js/faker");
 const HistorySchema = require("../../model/History");

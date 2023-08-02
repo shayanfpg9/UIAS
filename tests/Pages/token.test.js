@@ -1,5 +1,5 @@
 const { expect, test, describe, afterAll } = require("@jest/globals");
-const app = require("../../server");
+const app = require("../../app");
 const request = require("supertest")(app);
 const { faker } = require("@faker-js/faker");
 const TokenSchema = require("../../model/Token");
@@ -10,6 +10,7 @@ global.console = {
 
 let ip = faker.internet.ipv4();
 let cookie = "";
+let id;
 
 describe("Test token router", () => {
   test("POST /token/generate [GENERATE-TOKEN]", async () => {
@@ -51,6 +52,7 @@ describe("Test token router", () => {
     expect(response.headers["set-cookie"][0]).toMatch(/^Token=.+/);
 
     cookie = response.headers["set-cookie"][0];
+    id = response.body.data._id
   });
 
   test("GET /token/ [GET-TOKEN] -BY_COOKIE-", async () => {
@@ -117,5 +119,5 @@ describe("Test token router", () => {
 });
 
 afterAll(async () => {
-  await TokenSchema.deleteOne({ ip });
+  await TokenSchema.findByIdAndDelete(id)
 });

@@ -5,11 +5,9 @@ const {
   afterAll,
   beforeAll,
 } = require("@jest/globals");
-const app = require("../../server");
+const app = require("../../app");
 const request = require("supertest")(app);
-const { faker } = require("@faker-js/faker");
 const SearchSchema = require("../../model/Search");
-const generate = require("../../functions/generate");
 const { history, token: TestToken, search } = require("../functions/fake");
 const HistorySchema = require("../../model/History");
 const ReasonSchema = require("../../model/Reason");
