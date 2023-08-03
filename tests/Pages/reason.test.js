@@ -28,7 +28,7 @@ test("ALL /reason/**", async () => {
   await request.post(`/reason/set`).expect(401);
 
   await request.get(`/reason/get/`).expect(401);
-  await request.get(`/reason/get/?token=${token}`).expect(404);
+  await request.get(`/reason/get/`).query({ token }).expect(404);
 });
 
 describe("Make new", () => {
@@ -40,7 +40,7 @@ describe("Make new", () => {
       reason: SearchId
     };
     const response = await request
-      .post(`/reason/set/?token=${token}`)
+      .post(`/reason/set/`).query({ token })
       .send(information)
       .expect("Content-Type", /json/)
       .expect(201);
@@ -59,7 +59,7 @@ describe("Make new", () => {
 describe("Get reason", () => {
   test("GET /reason/get/?token=&at= [GET-ONE]", async () => {
     const response = await request
-      .get(`/reason/get/?token=${token}&at=${date}`)
+      .get(`/reason/get/`).query({ token, at: date })
       .expect("Content-Type", /json/)
       .expect(200);
 

@@ -35,7 +35,7 @@ test("ALL /history/** [WITHOUT-TRUE-TOKEN]", async () => {
   await request.put(`/history/update?token=${generate()}`).expect(401);
 
   await request
-    .post(`/history/new/?token=${token}`)
+    .post(`/history/new/`).query({ token })
     .send({})
     .expect("Content-Type", /json/)
     .expect(400);
@@ -44,7 +44,7 @@ test("ALL /history/** [WITHOUT-TRUE-TOKEN]", async () => {
 describe("Check status + Make new", () => {
   test("GET /history/has/?token=&page= [HAS-PAGE-EXISTED] -FALSE-", async () => {
     await request
-      .get(`/history/has/?token=${token}&page=${pageId}`)
+      .get(`/history/has/`).query({ token, page: pageId })
       .expect("Content-Type", /json/)
       .expect(404);
   });
@@ -56,7 +56,8 @@ describe("Check status + Make new", () => {
     );
 
     const response = await request
-      .post(`/history/new/?token=${token}`)
+      .post(`/history/new/`)
+      .query({ token })
       .send(information)
       .expect("Content-Type", /json/)
       .expect(201);
@@ -70,7 +71,8 @@ describe("Check status + Make new", () => {
 
   test("GET /history/has/?token=&page= [HAS-PAGE-EXISTED] -TRUE-", async () => {
     await request
-      .get(`/history/has/?token=${token}&page=${pageId}`)
+      .get(`/history/has/`)
+      .query({ token, page: pageId })
       .expect("Content-Type", /json/)
       .expect(200);
   });
@@ -79,11 +81,8 @@ describe("Check status + Make new", () => {
 describe("Update status", () => {
   test("PUT /history/update/?token=&page= [UPDATE-PAGE]", async () => {
     const response = await request
-      .put(
-        `/history/update/?token=${token}&page=${faker.number.int({
-          min: 2000,
-        })}`
-      )
+      .put(`/history/update/`)
+      .query({ token, page: faker.number.int({ min: 1000 }) })
       .expect("Content-Type", /json/)
       .expect(404);
 
@@ -94,7 +93,8 @@ describe("Update status", () => {
 
   test("PUT /history/update/?token=&page= [UPDATE-PAGE]", async () => {
     const response = await request
-      .put(`/history/update/?token=${token}&page=${pageId}`)
+      .put(`/history/update/`)
+      .query({ token, page: pageId })
       .expect("Content-Type", /json/)
       .expect(200);
 
@@ -114,7 +114,8 @@ describe("Update status", () => {
       true
     );
     const response = await request
-      .put(`/history/update/?token=${token}&page=${pageId}`)
+      .put(`/history/update/`)
+      .query({ token, page: pageId })
       .send(information)
       .expect("Content-Type", /json/)
       .expect(200);

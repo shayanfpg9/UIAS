@@ -24,7 +24,8 @@ describe("Test token router", () => {
     const agent = faker.internet.userAgent();
 
     const response = await request
-      .post("/token/generate?ip=" + ip)
+      .post("/token/generate")
+      .query({ ip })
       .set("sec-ch-ua-platform", platform)
       .set("user-agent", agent)
       .unset("cookie", "Token")
@@ -57,7 +58,8 @@ describe("Test token router", () => {
 
   test("GET /token/ [GET-TOKEN] -BY_COOKIE-", async () => {
     const response = await request
-      .get("/token/get?ip=" + ip)
+      .get("/token/get")
+      .query({ ip })
       .expect(200)
       .set("Cookie", cookie)
       .expect("Content-Type", /json/);
@@ -80,7 +82,8 @@ describe("Test token router", () => {
 
   test("GET /token/ [GET-TOKEN] -BY_ID-", async () => {
     const response = await request
-      .get("/token/get?ip=" + ip)
+      .get("/token/get")
+      .query({ ip })
       .expect(200)
       .expect("Content-Type", /json/);
 
@@ -107,7 +110,8 @@ describe("Test token router", () => {
 
   test("GET /token/ [GET] -ERROR-", async () => {
     const response = await request
-      .get("/token/get?ip=" + faker.internet.ipv4())
+      .get("/token/get")
+      .query({ ip: faker.internet.ipv4() })
       .expect(404)
       .expect("Content-Type", /json/);
 

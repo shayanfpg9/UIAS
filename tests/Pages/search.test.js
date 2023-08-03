@@ -32,15 +32,21 @@ test("ALL /search/** [WITHOUT-TRUE-TOKEN]", async () => {
   await request.post(`/search/new`).expect(401);
   await request.post(`/search/new?token=${generate()}`).expect(401);
   await request
-    .post(`/search/new/?token=${token}`)
-    .send({})
+    .post(`/search/new/`)
+    .query({ token })
     .expect("Content-Type", /json/)
     .expect(400);
 
-  await request.put(`/search/update/?id=${generate()}`).expect(400);
+  await request.put(`/search/update/`)
+    .query({ id: generate() })
+    .expect(400);
 
-  await request.get(`/search/get/?id=${generate()}`).expect(400);
-  await request.get(`/search/get/?user=${generate()}`).expect(400);
+  await request.get(`/search/get/`)
+    .query({ id: generate() })
+    .expect(400);
+  await request.get(`/search/get/`)
+    .query({ user: generate() })
+    .expect(400);
   await request.get(`/search/get/`).expect(400);
 });
 
@@ -51,7 +57,8 @@ describe("Check status + Make new", () => {
       Histories: generate(),
     };
     const response = await request
-      .post(`/search/new/?token=${token}`)
+      .post(`/search/new/`)
+      .query({ token })
       .send(information)
       .expect("Content-Type", /json/)
       .expect(201);
@@ -69,12 +76,14 @@ describe("Check status + Make new", () => {
 describe("Update visits", () => {
   test("PUT /search/update/?id= [UPDATE-PAGE]", async () => {
     await request
-      .put(`/search/update/?id=${pageId}`)
+      .put(`/search/update/`)
+      .query({ id: pageId })
       .send({ page: generate() })
       .expect(400);
 
     const response = await request
-      .put(`/search/update/?id=${pageId}`)
+      .put(`/search/update/`)
+      .query({ id: pageId })
       .send({
         page,
       })
@@ -98,7 +107,8 @@ describe("Update visits", () => {
 describe("Get search", () => {
   test("GET /search/get/?id= [GET-ONE]", async () => {
     const response = await request
-      .get(`/search/get/?id=${pageId}`)
+      .get(`/search/get/`)
+      .query({ id: pageId })
       .expect("Content-Type", /json/)
       .expect(200);
 
@@ -117,7 +127,8 @@ describe("Get search", () => {
     (await search({}))._id;
 
     const response = await request
-      .get(`/search/get/?user=${token}`)
+      .get(`/search/get/`)
+      .query({ user: token })
       .expect("Content-Type", /json/)
       .expect(200);
 
@@ -128,7 +139,7 @@ describe("Get search", () => {
     expect(response.body.data[1]).toBeDefined();
     expect(response.body.data[1].token).toBe(token);
 
-    response.body.data.forEach((obj,i) => {
+    response.body.data.forEach((obj, i) => {
       if (obj.Histories) {
         expect(i).toBe(0)
         expect(obj.Histories.name).toBeDefined();
