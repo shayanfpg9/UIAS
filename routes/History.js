@@ -78,7 +78,7 @@ router.post("/new/", async (req, res) => {
       PageId: page.PageId,
     });
 
-    if (IsExisted !== null) throw { message: "Existed", status: 400 };
+    if (IsExisted !== null) throw { message: "Not existed", status: 400 };
 
     try {
       const Create = await HistorySchema.create(page);
