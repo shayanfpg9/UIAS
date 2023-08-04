@@ -124,7 +124,7 @@ describe("Get search", () => {
   });
 
   test("GET /search/get/?user= [GET-MANY]", async () => {
-    (await search({}))._id;
+    await search({});
 
     const response = await request
       .get(`/search/get/`)
