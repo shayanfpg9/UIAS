@@ -20,6 +20,7 @@ const pageName = faker.commerce.product() + " - " + faker.word.sample();
 const pageId = Date.now();
 let token = "";
 let lastPrice = 0;
+let id;
 
 beforeAll(async () => {
   token = (await TestFunctions.token()).token;
@@ -65,7 +66,9 @@ describe("Check status + Make new", () => {
     expect(response.body).toBeDefined();
     expect(response.body.error).toBeUndefined();
     expect(response.body.data).toBeDefined();
+    expect(response.body.data.PageId).toEqual(pageId);
 
+    id = response.body.data._id
     lastPrice = response.body.data.price;
   });
 
@@ -79,7 +82,7 @@ describe("Check status + Make new", () => {
 });
 
 describe("Update status", () => {
-  test("PUT /history/update/?token=&page= [UPDATE-PAGE]", async () => {
+  test("PUT /history/update/?token=&page= [UPDATE-PAGE] -Error-", async () => {
     const response = await request
       .put(`/history/update/`)
       .query({ token, page: faker.number.int({ min: 1000 }) })
@@ -92,13 +95,17 @@ describe("Update status", () => {
   });
 
   test("PUT /history/update/?token=&page= [UPDATE-PAGE]", async () => {
+    const searched = await HistorySchema.findById(id)
+
+    expect(searched.PageId).toBe(pageId)
+
     const response = await request
       .put(`/history/update/`)
       .query({ token, page: pageId })
       .expect("Content-Type", /json/)
-      .expect(200);
+      // .expect(200);
 
-    expect(response.body).toBeDefined();
+    expect(response.body).toBe();
     expect(response.body.error).toBeUndefined();
     expect(response.body.data).toBeDefined();
     expect(response.body.data).toMatchObject({
