@@ -6,6 +6,6 @@ module.exports = {
   testEnvironment: "node",
   testTimeout: 15000,
   setupFiles: [
-    "./setup.js"
+    "./tests/functions/TestSetup.js"
   ],
 };
