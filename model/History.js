@@ -9,7 +9,6 @@ const HistorySchema = new Schema(
     PageId: {
       type: "number",
       required: true,
-      unique: true,
     },
     count: {
       type: "number",
