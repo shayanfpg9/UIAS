@@ -103,9 +103,8 @@ describe("Update status", () => {
       .put(`/history/update/`)
       .query({ token, page: pageId })
       .expect("Content-Type", /json/)
-      // .expect(200);
+      .expect(200);
 
-    expect(response.body).toBe();
     expect(response.body.error).toBeUndefined();
     expect(response.body.data).toBeDefined();
     expect(response.body.data).toMatchObject({
